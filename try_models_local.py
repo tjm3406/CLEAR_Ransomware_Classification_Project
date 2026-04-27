@@ -1,13 +1,5 @@
 import os, sys
-os.environ.pop('SPARK_HOME', None)
-os.environ["PYSPARK_PYTHON"] = sys.executable
-os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
 
-PYSPARK_HOME = r"C:\Users\sarah\miniforge3\envs\pyspark_env\Lib\site-packages\pyspark"
-
-os.environ["SPARK_HOME"]  = PYSPARK_HOME
-os.environ["HADOOP_HOME"] = PYSPARK_HOME  
-os.environ["PATH"] = r"C:\Users\sarah\miniforge3\envs\pyspark_env\Lib\site-packages\pyspark\bin" + os.pathsep + os.environ["PATH"]
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.ml import Pipeline
@@ -57,7 +49,7 @@ def build_linear_svm():
     param_grid = (
         ParamGridBuilder()
         .addGrid(svm.regParam, [0.05, 0.1, 0.15]) # [0.001, 0.01, 0.1]
-        .addGrid(svm.maxIter,  [100, 150]) # [50, 100]
+        .addGrid(svm.maxIter,  [100]) # [50, 100]
         .build()
     )
     return svm, param_grid
@@ -91,8 +83,8 @@ def build_random_forest():
     )
     param_grid = (
         ParamGridBuilder()
-        .addGrid(rf.numTrees,  [50, 100])
-        .addGrid(rf.maxDepth,  [8, 12])
+        .addGrid(rf.numTrees,  [50, 75])
+        .addGrid(rf.maxDepth,  [10, 12])
         .build()
     )
     return rf, param_grid
@@ -110,7 +102,7 @@ def build_gbt():
     param_grid = (
         ParamGridBuilder()
         .addGrid(gbt.maxIter,  [30, 50])
-        .addGrid(gbt.stepSize, [0.05, 0.1])
+        .addGrid(gbt.stepSize, [0.05, 0.1, 0.5])
         .build()
     )
     return gbt, param_grid
@@ -203,9 +195,9 @@ def evaluate_model(name: str, model, test_df):
         labelCol="Label", predictionCol="prediction"
     )
     accuracy  = mc_eval.setMetricName("accuracy").evaluate(predictions)
-    f1        = mc_eval.setMetricName("f1").evaluate(predictions)
-    precision = mc_eval.setMetricName("weightedPrecision").evaluate(predictions)
-    recall    = mc_eval.setMetricName("weightedRecall").evaluate(predictions)
+    f1        = mc_eval.setMetricName("fMeasureByLabel").evaluate(predictions)
+    precision = mc_eval.setMetricName("precisionByLabel").evaluate(predictions)
+    recall    = mc_eval.setMetricName("recallByLabel").evaluate(predictions)
 
     print(f"\tResults — {name}")
     print(f"\tAUC-ROC   : {auc_roc:.4f}")
@@ -325,10 +317,10 @@ if __name__ == "__main__":
     # 3. setup models
     print("Model setup")
     models_cfg = [
-        ("Logistic Regression", *build_logistic_regression()),
-        ("Linear SVM",          *build_linear_svm()),
-        ("Decision Tree",       *build_decision_tree()),
-        ("Random Forest",       *build_random_forest()),
+        # ("Logistic Regression", *build_logistic_regression()),
+        # ("Linear SVM",          *build_linear_svm()),
+        # ("Decision Tree",       *build_decision_tree()),
+        # ("Random Forest",       *build_random_forest()),
         ("GBT",                 *build_gbt()),
     ]
 
@@ -342,6 +334,6 @@ if __name__ == "__main__":
         results.append(metrics)
         path = os.path.join(output_path, name.replace(" ", "_"))
         best_model.write().overwrite().save(path)
-        print(f"\tSaved {name} → {path}")
+        print(f"\tSaved {name} to {path}")
 
     print_summary(results) 

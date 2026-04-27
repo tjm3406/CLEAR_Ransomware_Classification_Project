@@ -1,13 +1,4 @@
 import os, sys
-os.environ.pop('SPARK_HOME', None)
-os.environ["PYSPARK_PYTHON"] = sys.executable
-os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
-
-PYSPARK_HOME = r"C:\Users\sarah\miniforge3\envs\pyspark_env\Lib\site-packages\pyspark"
-
-os.environ["SPARK_HOME"]  = PYSPARK_HOME
-os.environ["HADOOP_HOME"] = PYSPARK_HOME  
-os.environ["PATH"] = r"C:\Users\sarah\miniforge3\envs\pyspark_env\Lib\site-packages\pyspark\bin" + os.pathsep + os.environ["PATH"]
 
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
@@ -40,7 +31,7 @@ def build_lr_cluster(
         regParam=reg_param,
         elasticNetParam=elastic_net,
         maxIter=max_iter,
-        family="binomial",
+        family="binomial",  
     )
 
 def build_svm_cluster(
@@ -65,7 +56,7 @@ def build_dt_cluster(
     )
 
 def build_rf_cluster(
-    num_trees: int = 100,
+    num_trees: int = 75,
     max_depth: int = 12,
 ):
     return RandomForestClassifier(
@@ -79,7 +70,7 @@ def build_rf_cluster(
 def build_gbt_cluster(
     max_iter: int      = 50,
     max_depth: int     = 8,
-    step_size: float   = 0.1,
+    step_size: float   = 0.5,
 ):
     return GBTClassifier(
         featuresCol="features",
@@ -156,9 +147,9 @@ def evaluate_model(name: str, model, test_df):
         labelCol="Label", predictionCol="prediction"
     )
     accuracy  = mc_eval.setMetricName("accuracy").evaluate(predictions)
-    f1        = mc_eval.setMetricName("f1").evaluate(predictions)
-    precision = mc_eval.setMetricName("weightedPrecision").evaluate(predictions)
-    recall    = mc_eval.setMetricName("weightedRecall").evaluate(predictions)
+    f1        = mc_eval.setMetricName("fMeasureByLabel").evaluate(predictions)
+    precision = mc_eval.setMetricName("precisionByLabel").evaluate(predictions)
+    recall    = mc_eval.setMetricName("recallByLabel").evaluate(predictions)
 
     print(f"\tResults — {name}")
     print(f"\tAUC-ROC   : {auc_roc:.4f}")
@@ -257,10 +248,10 @@ if __name__ == "__main__":
 
     print("Model setup")
     models_cfg = [
-        ("Logistic Regression", build_lr_cluster()),
-        ("Linear SVM",          build_svm_cluster()),
-        ("Decision Tree",       build_dt_cluster()),
-        ("Random Forest",       build_rf_cluster()),
+        # ("Logistic Regression", build_lr_cluster()),
+        # ("Linear SVM",          build_svm_cluster()),
+        # ("Decision Tree",       build_dt_cluster()),
+        # ("Random Forest",       build_rf_cluster()),
         ("GBT",                 build_gbt_cluster()),
     ]
 
