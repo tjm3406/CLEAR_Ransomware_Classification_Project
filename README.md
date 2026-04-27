@@ -17,3 +17,7 @@ This python program takes in two arguments:
 This python program takes in two arguments:
   1. Input Directory (gs URI found above)
   2. Output Directory
+
+Workflow Diagram:
+
+![Workflow Diagram](CLEAR_Ransomeware_Classification_Project/CLEAR_Workflow_Diagram.drawio.pdf)
