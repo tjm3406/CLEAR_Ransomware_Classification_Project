@@ -14,3 +14,6 @@ This python program takes in two arguments:
 
 **tuned_training.py and try_models_local.py** both perform model training and evaluation on the feature engineered dataset which can be found here: gs://metcs777-term-project-clear/ml_ready/
 
+This python program takes in two arguments:
+  1. Input Directory (gs URI found above)
+  2. Output Directory
