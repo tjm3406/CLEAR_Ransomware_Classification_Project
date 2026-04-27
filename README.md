@@ -20,4 +20,4 @@ This python program takes in two arguments:
 
 Workflow Diagram:
 
-![Workflow Diagram](CLEAR_Ransomeware_Classification_Project/CLEAR_Workflow_Diagram.drawio.pdf)
+![Workflow Diagram](https://github.com/tjm3406/CLEAR_Ransomware_Classification_Project/blob/main/Workflow_Diagram.PNG)
