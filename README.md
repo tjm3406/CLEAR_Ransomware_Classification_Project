@@ -1,4 +1,5 @@
-# CLEAR_Ransomware_Classification_Project
+# Reveal Ransomware
+# By: Tyler Miller, Sarah Liu and Pan Hu
 
 **read_data.py** performs filtering and data ingestion on the raw dataset which can be found here: gs://metcs777-term-project-clear/CLEAR_NeurIPS/
 
